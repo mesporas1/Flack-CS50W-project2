@@ -4,8 +4,6 @@
     Flack
 {% endblock %}
 
-<script>"{{url_for('static', filename='index.js')}}"</script>
-
 {% block body %}
     <h1>Welcome to Flack!</h1>
     
@@ -17,7 +15,7 @@
                       <label for="exampleInputEmail1">Username</label>
                       <input type="username" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Create username" name="username">
                     </div>
-                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                    <button type="submit" class="btn btn-primary" onclick="hello()">Sign Up</button>
    
 
 
