@@ -4,20 +4,21 @@
     Flack
 {% endblock %}
 
+{% block src %}
+src="{{url_for('static', filename='index.js')}}"
+{% endblock %}
+
 {% block body %}
     <h1>Welcome to Flack!</h1>
     
     <h2> Please create a username</h2>
 
-      
-            
-                    <div class="form-group">
-                      <label for="exampleInputEmail1">Username</label>
-                      <input type="username" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Create username" name="username">
-                    </div>
-                    <button type="submit" class="btn btn-primary" onclick="hello()">Sign Up</button>
+    <form id="form" action="{{url_for('channels')}}">
+      <input id="user" autocomplete="off" autofocus placeholder= "Enter username" type="text">
+      <input type="submit">
+    </form>
    
-
+    <h1 id="user"></h1>
 
     
 

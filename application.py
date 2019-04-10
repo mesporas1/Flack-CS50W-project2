@@ -16,8 +16,6 @@ def index():
     return render_template("index.html")
 
     
-@socketio.on("submit vote")
-def vote(data):
-    selection = data["selection"]
-    votes[selection] += 1
-    emit("vote totals", votes, broadcast=True)
+@app.route("/channels")
+def channels():
+    return render_template("channels.html")
