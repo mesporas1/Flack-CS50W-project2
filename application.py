@@ -1,14 +1,14 @@
-import os
+#import os
 import requests
 
 from flask import Flask, jsonify, render_template, request
-from flask_socketio import SocketIO, emit
+#from flask_socketio import SocketIO, emit
 
-app = Flask(__name__, static_folder='static')
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-socketio = SocketIO(app)
+app = Flask(__name__)
+#app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+#socketio = SocketIO(app)
 
-votes = {"yes": 0, "no": 0, "maybe": 0}
+channelList = []
 
 
 @app.route("/")
@@ -19,3 +19,11 @@ def index():
 @app.route("/channels")
 def channels():
     return render_template("channels.html")
+
+@app.route("/newChannel", methods=["POST"])
+def newChannel():
+    channel = request.form.get("channel")
+    print(channel)
+    channelList.append(channel)
+    print(channelList)
+    return jsonify(channelList)

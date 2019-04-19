@@ -14,6 +14,6 @@ document.querySelector('form').onsubmit = () => {
     // Update counter
     document.querySelector('#user').innerHTML = user;
     localStorage.setItem('user', user);
-    alert(`Hello ${localStorage.getItem('user')}`)
+    //alert(`Hello ${localStorage.getItem('user')}`)
 }
 });
