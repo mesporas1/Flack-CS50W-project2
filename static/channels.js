@@ -17,35 +17,27 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('#submit').disabled = true;
     };
 
-    document.querySelector('#form').onsubmit = () => {
+    // Connect to websocket
+    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
-        //Below code adds a channel to the list but also stores the information on the server
-        const request = new XMLHttpRequest();
-        const channel = document.querySelector('#channel').value;
-        console.log(channel);
-        console.log(request);
-        request.open('POST', '/newChannel');
-
-        request.onload = () => {
-            const channels = JSON.parse(request.responseText);
+    socket.on('connect', () => {
+        document.querySelector('#form').onsubmit = () => {
+            const channel = document.querySelector('#channel').value;
+            socket.emit('add channel', {'channel': channel})
+        };
+    });
+            
+    socket.on('update channels', data => {
+            console.log("the initial data is " + data)
+            const channels = JSON.parse(data.channels);
+            console.log("The channels after being parsed are " + channels);
             const li = document.createElement('li');
             li.innerHTML = channels[channels.length - 1];
             document.querySelector("#channels").append(li);
-
-            console.log(channels)
-        }
-
-        //Add data to send with request
-        const data = new FormData();
-        data.append('channel', channel)
-
-        //Send Request
-        request.send(data);
-        return false;
-        };    
-
+            console.log("the channels should be " + channels);
+    });          
+});
 
 
 
 //End of onloaded function
-});
