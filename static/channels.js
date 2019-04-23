@@ -28,13 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
             
     socket.on('update channels', data => {
-            console.log("the initial data is " + data)
-            const channels = JSON.parse(data.channels);
-            console.log("The channels after being parsed are " + channels);
+            console.log("the initial data is " + data.channel)
             const li = document.createElement('li');
-            li.innerHTML = channels[channels.length - 1];
-            document.querySelector("#channels").append(li);
-            console.log("the channels should be " + channels);
+            li.innerHTML = `test: ${data.channel}`;
+            document.querySelector('#channels').append(li);
     });          
 });
 

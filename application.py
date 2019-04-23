@@ -27,4 +27,4 @@ def newChannel(data):
     print(channel)
     channelList.append(channel)
     print(channelList)
-    emit("update channels", channelList, broadcast = True)
+    emit("update channels", {"channel": channel}, broadcast = True)
