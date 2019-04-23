@@ -15,7 +15,7 @@ channelList = []
 def index():
     return render_template("index.html")
 
-    
+#channelList gets sent to client when channels.html is loaded
 @app.route("/channels")
 def channels():
     return render_template("channels.html", channelList = channelList)
