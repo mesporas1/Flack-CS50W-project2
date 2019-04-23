@@ -18,7 +18,7 @@ def index():
     
 @app.route("/channels")
 def channels():
-    return render_template("channels.html")
+    return render_template("channels.html", channelList = channelList)
 
 #@app.route("/newChannel", methods=["POST"])
 @socketio.on("add channel")

@@ -1,3 +1,9 @@
+//Todo:
+//  4-23-2019: Need to add channelList if uninitialized whenver the page is relaoded
+
+
+
+
 // Set starting value of user if empty
 if (!localStorage.getItem('user'))
 localStorage.setItem('user', "Null");
@@ -21,16 +27,17 @@ document.addEventListener('DOMContentLoaded', () => {
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
     socket.on('connect', () => {
-        document.querySelector('#form').onsubmit = () => {
+        document.querySelector('#submit').onclick = () => {
             const channel = document.querySelector('#channel').value;
             socket.emit('add channel', {'channel': channel})
+            document.querySelector('#channel').value = "";
         };
     });
             
     socket.on('update channels', data => {
             console.log("the initial data is " + data.channel)
             const li = document.createElement('li');
-            li.innerHTML = `test: ${data.channel}`;
+            li.innerHTML = data.channel;
             document.querySelector('#channels').append(li);
     });          
 });
