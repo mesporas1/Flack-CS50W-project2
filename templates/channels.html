@@ -4,9 +4,21 @@
     Flack
 {% endblock %}
 
-{% block src %}
-src="{{ url_for('static', filename='channels.js') }}"
+{% block script %}
+<script id="channel-item" type="text/x-handlebars-template">
+    <li>
+        {% raw -%}
+            {{ channelName }}
+        {%- endraw %}
+        <!--<button class ="join">Join</button>-->
+    </li>
+</script>
+<script src="{{ url_for('static', filename='channels.js') }}"></script>
 {% endblock %}
+
+
+
+
 
 {% block body %}
    
@@ -14,10 +26,11 @@ src="{{ url_for('static', filename='channels.js') }}"
     <h1>Channels</h1>
     
     <input id="channel" autocomplete="off" autofocus placeholder="Add a new channel" type="text">
-    <button id ="submit" type="submit" value="Submit">
+    <button id ="submit" type="submit" value="Submit">Submit</button>
     
     
     <ul id="channels">
     </ul>
+    
 
 {% endblock %}

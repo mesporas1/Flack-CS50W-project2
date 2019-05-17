@@ -18,7 +18,12 @@ def index():
 #channelList gets sent to client when channels.html is loaded
 @app.route("/channels")
 def channels():
-    return render_template("channels.html", channelList = channelList)
+    return render_template("channels.html")
+
+@app.route("/channelList", methods=["POST"])
+def getChannelList():
+    print(jsonify(channelList))
+    return jsonify(channelList)
 
 #@app.route("/newChannel", methods=["POST"])
 @socketio.on("add channel")
