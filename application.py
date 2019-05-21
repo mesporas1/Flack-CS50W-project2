@@ -1,5 +1,6 @@
 import os
 import requests
+import classes
 
 from flask import Flask, jsonify, render_template, request
 from flask_socketio import SocketIO, emit
@@ -8,7 +9,7 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 socketio = SocketIO(app)
 
-channelList = []
+channelList = {}
 
 
 @app.route("/")
@@ -28,8 +29,8 @@ def getChannelList():
 #@app.route("/newChannel", methods=["POST"])
 @socketio.on("add channel")
 def newChannel(data):
-    channel = data["channel"]
-    print(channel)
-    channelList.append(channel)
+    channelName = data["channel"]
+    print(channelName)
+    channelList = {channelName: Channel()}
     print(channelList)
-    emit("update channels", {"channel": channel}, broadcast = True)
+    emit("update channels", {"channel": channelName}, broadcast = True)
