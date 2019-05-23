@@ -38,8 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
     socket.on('update channels', data => {
             console.log("the initial data is " + data.channel)
-            const channel = channel_template({'channelName': data.channel});
-            //li.innerHTML = data.channel;
+            const channel = channel_template({'channelName': data.channel});            
             console.log(channel);
             document.querySelector('#channels').innerHTML += channel;
     });          

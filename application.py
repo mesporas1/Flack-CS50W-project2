@@ -24,8 +24,12 @@ def channels():
 
 @app.route("/channelList", methods=["POST"])
 def getChannelList():
-    print(jsonify(channelList))
-    return channelList
+    values = channelList.values()
+    data = []
+    for channel in values:
+        data.append(channel.name)
+    print(jsonify(data))   
+    return (jsonify(data))
 
 #@app.route("/newChannel", methods=["POST"])
 @socketio.on("add channel")

@@ -6,12 +6,11 @@
 
 {% block script %}
 <script id="channel-item" type="text/x-handlebars-template">
-    <li>
+    <a class="dropdown-item" href="#">
         {% raw -%}
             {{ channelName }}
-        {%- endraw %}
-        <!--<button class ="join">Join</button>-->
-    </li>
+        {%- endraw %} 
+    </a>
 </script>
 <script src="{{ url_for('static', filename='channels.js') }}"></script>
 {% endblock %}
@@ -28,9 +27,12 @@
     <input id="channel" autocomplete="off" autofocus placeholder="Add a new channel" type="text">
     <button id ="submit" type="submit" value="Submit">Submit</button>
     
-    
-    <ul id="channels">
-    </ul>
-    
+    <div class = "dropdown">
+    	<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    	Select Channel
+  	</button>	
+	<div class="dropdown-menu" id="channels" aria-labelledby="dropdownMenuButton">
+    	</div>
+    </div>
 
 {% endblock %}
