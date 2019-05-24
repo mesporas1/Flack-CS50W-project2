@@ -6,11 +6,7 @@
 
 {% block script %}
 <script id="channel-item" type="text/x-handlebars-template">
-    <a class="dropdown-item" href="#">
-        {% raw -%}
-            {{ channelName }}
-        {%- endraw %} 
-    </a>
+    <button class="dropdown-item channel-name" type="button">{% raw -%}{{ channelName }}{%- endraw %}</button>
 </script>
 <script src="{{ url_for('static', filename='channels.js') }}"></script>
 {% endblock %}

@@ -8,7 +8,7 @@ class Channel:
         self.userlist = {}
         self.name = name
 class User:
-    def __init__(self,name):
+    def __init__(self,name,lastChannel):
         self.username = name
         self.lastChannel = ""
 

@@ -15,6 +15,7 @@ channelList = {}
 
 @app.route("/")
 def index():
+
     return render_template("index.html")
 
 #channelList gets sent to client when channels.html is loaded
@@ -39,3 +40,8 @@ def newChannel(data):
     channelList[channelName] = Channel(channelName)
     print(channelList[channelName])
     emit("update channels", {"channel": channelName}, broadcast = True)
+
+@app.route("/channel/<string:channelName>")
+def getChannel(channelName):
+    print("testing123")
+    

@@ -41,10 +41,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const channel = channel_template({'channelName': data.channel});            
             console.log(channel);
             document.querySelector('#channels').innerHTML += channel;
-    });          
+    });
+
+    //Select channel
+    
 });
 
 //End of onloaded function
+
+
+
 
 function initChannelList() {
 
@@ -67,8 +73,33 @@ const channel_template = Handlebars.compile(document.querySelector('#channel-ite
 console.log(channel_template);
 function add_channel(channelName) {
     //Create new channel
-    const channel = channel_template({'channelName': channelName});
+    const link ="/channel/" + channelName;
+    console.log(link);
+    const channel = channel_template({'link': link, 'channelName': channelName});
+    
+    channel.onclick = function() {
+        console.log("hello11")
+        channelName = this.innerHTML;
+        console.log(channelName);
+        selectChannel(channelName);
+    };
     console.log(channel);
     //Add channel to DOM
     document.querySelector('#channels').innerHTML += channel;
+    
+    
+    
 };
+
+
+function selectChannel(channelName) {
+
+    const request = new XMLHttpRequest();
+    request.open('POST', `/channelList/${channelName}`);
+    
+
+    const data = new FormData();
+
+    request.send(data);
+
+}
