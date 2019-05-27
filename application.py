@@ -41,7 +41,21 @@ def newChannel(data):
     print(channelList[channelName])
     emit("update channels", {"channel": channelName}, broadcast = True)
 
-@app.route("/channel/<string:channelName>")
-def getChannel(channelName):
-    print("testing123")
-    
+@socketio.on("select channel")
+def getChannel(data):
+    channelInfo = channelList[data["channelName"]]
+    channelInfo.userlist.append(data["user"])
+    print(channelInfo.userlist)
+    test = channelInfo.userlist
+    test2 = jsonify(test)
+    print(test2)
+    emit("update users", {"users": test})
+
+
+@socketio.on("add message")
+def newMessage(data):
+    channelName = data["channel"]
+    print(channelName)
+    channelList[channelName] = Channel(channelName)
+    print(channelList[channelName])
+    emit("update channels", {"channel": channelName}, broadcast = True)

@@ -5,9 +5,9 @@
 {% endblock %}
 
 {% block script %}
-<script id="channel-item" type="text/x-handlebars-template">
+<!--<script id="channel-item" type="text/x-handlebars-template">
     <button class="dropdown-item channel-name" type="button">{% raw -%}{{ channelName }}{%- endraw %}</button>
-</script>
+</script> -->
 <script src="{{ url_for('static', filename='channels.js') }}"></script>
 {% endblock %}
 
@@ -17,18 +17,43 @@
 
 {% block body %}
    
-    <h1 id = "user" class = "fixed-bottom"> </h1>
-    <h1>Channels</h1>
-    
-    <input id="channel" autocomplete="off" autofocus placeholder="Add a new channel" type="text">
-    <button id ="submit" type="submit" value="Submit">Submit</button>
-    
-    <div class = "dropdown">
-    	<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    	Select Channel
-  	</button>	
-	<div class="dropdown-menu" id="channels" aria-labelledby="dropdownMenuButton">
-    	</div>
+    <div class = "row justify-content-between">
+        <div class = "col-8">
+                <h2 id="channelSelection">Current Channel: </h1>
+        </div>
+        <div class = "col-4 align-self-end"> 
+            <h5 id = "user"> </h5> 
+        </div>
     </div>
+    
+    
+        <div class = "row justify-content-center">
+                <div class ="col-6 col-md-4">
+                        <input id="channel" autocomplete="off" autofocus placeholder="Add a new channel" type="text">
+                        <button id ="submitChannel" type="submit" value="Submit">Submit</button>
+                        <!--<ul id="channels"></ul> -->
+                        <div class = "dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Select Channel
+                            </button>	
+                           <div class="dropdown-menu" id="channels" aria-labelledby="dropdownMenuButton"></div>
+                            </div>
+                        <ul class = "online-users">
 
+                        </ul>
+                    </div>
+            <div class ="col-12 col-sm-6 col-md-8">
+                    
+                    <ul id="messages">  </ul>
+                    <input id="message" autocomplete="off" autofocus placeholder="Send a message" type="text">
+                    <button id ="submitMessage" type="submit" value="Submit">Submit</button>
+            </div>
+        </div>
+        
+        
+    
+    
+        
+
+    
 {% endblock %}

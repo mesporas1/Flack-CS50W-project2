@@ -10,41 +10,62 @@ localStorage.setItem('user', "Null");
 
 // Displays user
 document.addEventListener('DOMContentLoaded', () => {
-    document.querySelector('#user').innerHTML = localStorage.getItem('user');
-
+    document.querySelector('#user').innerHTML = "Welcome, " + localStorage.getItem('user');
+    if (localStorage.getItem('channelSelection') == null) {
+        document.querySelector("#channelSelection").innerHTML += "Not Selected";
+    }
     initChannelList();
 
     // By default, submit button is disabled
-    document.querySelector('#submit').disabled = true;
+    document.querySelector('#submitChannel').disabled = true;
 
     // Enable button only if there is text in the input field
     document.querySelector('#channel').onkeyup = () => {
         if (document.querySelector('#channel').value.length > 0)
-            document.querySelector('#submit').disabled = false;
+            document.querySelector('#submitChannel').disabled = false;
         else
-            document.querySelector('#submit').disabled = true;
+            document.querySelector('#submitChannel').disabled = true;
     };
 
     // Connect to websocket
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
     socket.on('connect', () => {
-        document.querySelector('#submit').onclick = () => {
+        document.querySelector('#submitChannel').onclick = () => {
             const channel = document.querySelector('#channel').value;
-            socket.emit('add channel', {'channel': channel})
+            socket.emit('add channel', {'channel': channel});
             document.querySelector('#channel').value = "";
         };
+
+        /*document.querySelector('#submitMessage').onclick = () => {
+            const message = document.querySelector('#message').value;
+            const currentChannel = document.querySelector()
+            socket.emit('add message', {'message': message})
+            document.querySelector('#message').value = "";
+        };*/
+
+        document.querySelectorAll('.dropdown-item').forEach(button =>{
+            button.onclick = () => {
+                const channelName = button.innerHTML;
+                const user = localStorage.getItem('user');
+                socket.emit('select channel', {'channelName': channelName, 'user': user});
+            }
+        });
     });
+
             
     socket.on('update channels', data => {
             console.log("the initial data is " + data.channel)
-            const channel = channel_template({'channelName': data.channel});            
+            const channel = createChannelElement(data.channel);            
             console.log(channel);
-            document.querySelector('#channels').innerHTML += channel;
+            document.querySelector('#channels').append(channel);
     });
 
-    //Select channel
+    socket.on('update users', data => {
+            
+    })
     
+        
 });
 
 //End of onloaded function
@@ -69,37 +90,30 @@ function initChannelList() {
 
 };
 
-const channel_template = Handlebars.compile(document.querySelector('#channel-item').innerHTML);
-console.log(channel_template);
+//const channel_template = Handlebars.compile(document.querySelector('#channel-item').innerHTML);
+//console.log(channel_template);
 function add_channel(channelName) {
     //Create new channel
-    const link ="/channel/" + channelName;
-    console.log(link);
-    const channel = channel_template({'link': link, 'channelName': channelName});
-    
-    channel.onclick = function() {
-        console.log("hello11")
-        channelName = this.innerHTML;
-        console.log(channelName);
-        selectChannel(channelName);
-    };
+    const channel = createChannelElement(channelName);
     console.log(channel);
     //Add channel to DOM
-    document.querySelector('#channels').innerHTML += channel;
-    
-    
-    
+    document.querySelector('#channels').append(channel);
+};
+
+function createChannelElement(channelName) {
+    const channel = document.createElement('button');
+    channel.className = 'dropdown-item';
+    //channel.type = 'button';
+    channel.innerHTML = channelName;
+    //channel.href = "/channel/" + channelName;
+    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+    socket.on('connect', () => {
+        channel.onclick = () => {
+            const user = localStorage.getItem('user');
+            socket.emit('select channel', {'channelName': channelName, 'user': user});
+        }
+    });
+    return channel;
 };
 
 
-function selectChannel(channelName) {
-
-    const request = new XMLHttpRequest();
-    request.open('POST', `/channelList/${channelName}`);
-    
-
-    const data = new FormData();
-
-    request.send(data);
-
-}

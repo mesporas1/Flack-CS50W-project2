@@ -5,7 +5,7 @@ import collections
 class Channel:
     def __init__(self, name):
         self.messages = collections.deque(maxlen=100)
-        self.userlist = {}
+        self.userlist = []
         self.name = name
 class User:
     def __init__(self,name,lastChannel):
