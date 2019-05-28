@@ -58,7 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("the initial data is " + data.channel)
             const channel = createChannelElement(data.channel);            
             console.log(channel);
-            document.querySelector('#channels').append(channel);
+            document.querySelector('#channels').append(channel)
+	    document.location.reload();
     });
 
     socket.on('update users', data => {
@@ -107,12 +108,13 @@ function createChannelElement(channelName) {
     channel.innerHTML = channelName;
     //channel.href = "/channel/" + channelName;
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
-    socket.on('connect', () => {
-        channel.onclick = () => {
+    console.log("hello socket");
+    /*socket.on('connect', () => {
+        .onclick = () => {
             const user = localStorage.getItem('user');
             socket.emit('select channel', {'channelName': channelName, 'user': user});
         }
-    });
+    });*/
     return channel;
 };
 
