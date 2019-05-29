@@ -8,13 +8,19 @@
 if (!localStorage.getItem('user'))
 localStorage.setItem('user', "Null");
 
+if (!localStorage.getItem('currentChannel'))
+localStorage.setItem('currentChannel', "Not Selected");
+
 // Displays user
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('#user').innerHTML = "Welcome, " + localStorage.getItem('user');
-    if (localStorage.getItem('channelSelection') == null) {
+    if (!localStorage.getItem('channelSelection')) {
         document.querySelector("#channelSelection").innerHTML += "Not Selected";
     }
-    initChannelList();
+    else {
+	document.querySelector("#channelSelection").innerHTML += localStorage.getItem('currentChannel');
+    };
+	
 
     // By default, submit button is disabled
     document.querySelector('#submitChannel').disabled = true;
@@ -47,7 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.dropdown-item').forEach(button =>{
             button.onclick = () => {
                 const channelName = button.innerHTML;
-                const user = localStorage.getItem('user');
+                localStorage.setItem('currentChannel', channelName);
+		const user = localStorage.getItem('user');
                 socket.emit('select channel', {'channelName': channelName, 'user': user});
             }
         });
@@ -107,8 +114,8 @@ function createChannelElement(channelName) {
     //channel.type = 'button';
     channel.innerHTML = channelName;
     //channel.href = "/channel/" + channelName;
-    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
-    console.log("hello socket");
+    //var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+    //console.log("hello socket");
     /*socket.on('connect', () => {
         .onclick = () => {
             const user = localStorage.getItem('user');
