@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     initChannelList();
-
+    initMessageList();
     // Connect to websocket
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
@@ -78,7 +78,9 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(data.message);
         const message = document.createElement('li');
         message.innerHTML = data.message;
-        document.querySelector('#messages').append(message);
+        if (localStorage.getItem('currentChannel') == data.channelName){
+	document.querySelector('#messages').append(message);
+	}
     });
     
         
@@ -87,7 +89,27 @@ document.addEventListener('DOMContentLoaded', () => {
 //End of onloaded function
 
 
+function initMessageList() {
+    const request = new XMLHttpRequest();
+    request.open('POST', '/messageList');
+    console.log(request);
+    request.onload = () => {
+    	const data = JSON.parse(request.responseText);
+	console.log(data);
+	data.forEach(add_message);
+    };
 
+    const data = new FormData();
+    data.append('channelName', localStorage.getItem('currentChannel'));
+    request.send(data);
+};
+
+function add_message(messageText) {
+    const message = document.createElement('li');
+    message.innerHTML = messageText;
+    console.log(message);
+    document.querySelector('#messages').append(message);
+};
 
 function initChannelList() {
 

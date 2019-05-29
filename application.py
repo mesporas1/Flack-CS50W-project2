@@ -32,6 +32,16 @@ def getChannelList():
     print(jsonify(data))   
     return (jsonify(data))
 
+@app.route("/messageList", methods=["POST"])
+def getMessageList():
+    channelName = request.form.get("channelName");
+    channel = channelList[channelName]
+    data = []
+    for messages in channel.messages:
+        data.append(messages)
+    print(jsonify(data))
+    return (jsonify(data))
+
 #@app.route("/newChannel", methods=["POST"])
 @socketio.on("add channel")
 def newChannel(data):
@@ -63,4 +73,4 @@ def newMessage(data):
     channel = channelList[channelName]
     channel.messages.append(message)
     print(channel.messages)
-    emit("update messages", {"message": message}, broadcast = True)
+    emit("update messages", {"message": message, "channelName":channelName}, broadcast = True)
