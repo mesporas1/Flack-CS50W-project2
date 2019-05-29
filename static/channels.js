@@ -2,19 +2,22 @@
 //  4-23-2019: Need to add channelList if uninitialized whenver the page is relaoded
 
 
+//Prompt user for a username if empty. Set starting value of user if empty
 
-
-// Set starting value of user if empty
-if (!localStorage.getItem('user'))
-localStorage.setItem('user', "Null");
-
-if (!localStorage.getItem('currentChannel'))
-localStorage.setItem('currentChannel', "Not Selected");
 
 // Displays user
 document.addEventListener('DOMContentLoaded', () => {
-    document.querySelector('#user').innerHTML = "Welcome, " + localStorage.getItem('user');
-    if (!localStorage.getItem('channelSelection')) {
+    if (!localStorage.getItem('user') || localStorage.getItem('user') == null || localStorage.getItem('user') == "null"){
+        //localStorage.setItem('user', "Null");
+        user = window.prompt("Please enter a username", "Enter username");
+        localStorage.setItem('user', user);
+        document.location.reload();   
+    }
+    else {
+        document.querySelector('#user').innerHTML = "Welcome, " + localStorage.getItem('user');
+    }
+    //document.querySelector('#user').innerHTML = "Welcome, " + localStorage.getItem('user');
+    if (!localStorage.getItem('currentChannel')) {
         document.querySelector("#channelSelection").innerHTML += "Not Selected";
     }
     else {
@@ -33,6 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('#submitChannel').disabled = true;
     };
 
+    initChannelList();
+
     // Connect to websocket
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
@@ -43,19 +48,19 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('#channel').value = "";
         };
 
-        /*document.querySelector('#submitMessage').onclick = () => {
+        document.querySelector('#submitMessage').onclick = () => {
             const message = document.querySelector('#message').value;
-            const currentChannel = document.querySelector()
-            socket.emit('add message', {'message': message})
+            socket.emit('add message', {'message': message, 'user':localStorage.getItem('user'), 'channel':localStorage.getItem('currentChannel')});
             document.querySelector('#message').value = "";
-        };*/
+        };
 
         document.querySelectorAll('.dropdown-item').forEach(button =>{
             button.onclick = () => {
                 const channelName = button.innerHTML;
                 localStorage.setItem('currentChannel', channelName);
-		const user = localStorage.getItem('user');
+                const user = localStorage.getItem('user');
                 socket.emit('select channel', {'channelName': channelName, 'user': user});
+                document.location.reload();
             }
         });
     });
@@ -65,13 +70,16 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("the initial data is " + data.channel)
             const channel = createChannelElement(data.channel);            
             console.log(channel);
-            document.querySelector('#channels').append(channel)
-	    document.location.reload();
+            document.querySelector('#channels').append(channel);
+	        document.location.reload();
     });
 
-    socket.on('update users', data => {
-            
-    })
+    socket.on('update messages', data => {
+        console.log(data.message);
+        const message = document.createElement('li');
+        message.innerHTML = data.message;
+        document.querySelector('#messages').append(message);
+    });
     
         
 });

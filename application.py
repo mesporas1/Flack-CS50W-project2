@@ -1,6 +1,6 @@
 import os
 import requests
-
+from datetime import datetime
 
 from flask import Flask, jsonify, render_template, request
 from flask_socketio import SocketIO, emit
@@ -13,13 +13,13 @@ socketio = SocketIO(app)
 channelList = {}
 
 
-@app.route("/")
-def index():
+#@app.route("/")
+#def index():
 
-    return render_template("index.html")
+    #return render_template("index.html")
 
 #channelList gets sent to client when channels.html is loaded
-@app.route("/channels")
+@app.route("/")
 def channels():
     return render_template("channels.html")
 
@@ -55,7 +55,12 @@ def getChannel(data):
 @socketio.on("add message")
 def newMessage(data):
     channelName = data["channel"]
-    print(channelName)
-    channelList[channelName] = Channel(channelName)
-    print(channelList[channelName])
-    emit("update channels", {"channel": channelName}, broadcast = True)
+    user = data["user"]
+    message = data["message"]
+    now = datetime.now()
+    date_time = now.strftime("%m/%d/%Y, %H:%M:%S: ")	
+    message = date_time + user + ": " + message
+    channel = channelList[channelName]
+    channel.messages.append(message)
+    print(channel.messages)
+    emit("update messages", {"message": message}, broadcast = True)
