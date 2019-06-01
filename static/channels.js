@@ -7,11 +7,21 @@
 
 // Displays user
 document.addEventListener('DOMContentLoaded', () => {
+    console.log(userList);
     if (!localStorage.getItem('user') || localStorage.getItem('user') == null || localStorage.getItem('user') == "null"){
         //localStorage.setItem('user', "Null");
         user = window.prompt("Please enter a username", "Enter username");
+        console.log(userList.indexOf(user));
+        if (userList.indexOf(user) >= 0){
+            //console.log('hello');
+            alert("User exists!");
+            document.location.reload();
+        }
+        else{
         localStorage.setItem('user', user);
+        updateUserList();
         document.location.reload();   
+        };
     }
     else {
         document.querySelector('#user').innerHTML = "Welcome, " + localStorage.getItem('user');
@@ -21,7 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector("#channelSelection").innerHTML += "Not Selected";
     }
     else {
-	document.querySelector("#channelSelection").innerHTML += localStorage.getItem('currentChannel');
+    document.querySelector("#channelSelection").innerHTML += localStorage.getItem('currentChannel');
+    initMessageList();
     };
 	
 
@@ -37,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     initChannelList();
-    initMessageList();
+    
     // Connect to websocket
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
@@ -88,6 +99,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 //End of onloaded function
 
+function updateUserList() {
+    const request = new XMLHttpRequest();
+    request.open('POST', '/updateUserList');
+    console.log(request);
+    const data = new FormData();
+    data.append('user', localStorage.getItem('user'));
+    request.send(data);
+};
 
 function initMessageList() {
     const request = new XMLHttpRequest();

@@ -8,6 +8,7 @@
 <!--<script id="channel-item" type="text/x-handlebars-template">
     <button class="dropdown-item channel-name" type="button">{% raw -%}{{ channelName }}{%- endraw %}</button>
 </script> -->
+<script type=text/javascript> var userList = {{ userList|tojson|safe }}; </script>
 <script src="{{ url_for('static', filename='channels.js') }}"></script>
 {% endblock %}
 
@@ -39,7 +40,6 @@
                            <div class="dropdown-menu" id="channels" aria-labelledby="dropdownMenuButton"></div>
                             </div>
                         <ul class = "online-users">
-
                         </ul>
                     </div>
             <div class ="col-12 col-sm-6 col-md-8">

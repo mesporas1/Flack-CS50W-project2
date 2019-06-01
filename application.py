@@ -11,7 +11,7 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 socketio = SocketIO(app)
 
 channelList = {}
-
+userList = []
 
 #@app.route("/")
 #def index():
@@ -19,9 +19,18 @@ channelList = {}
     #return render_template("index.html")
 
 #channelList gets sent to client when channels.html is loaded
+
 @app.route("/")
 def channels():
-    return render_template("channels.html")
+    return render_template("channels.html", userList = userList)
+
+@app.route("/updateUserList", methods = ["POST"])
+def updateUserList():
+    user = request.form.get("user")
+    userList.append(user)
+    print(userList)
+    return "True"
+
 
 @app.route("/channelList", methods=["POST"])
 def getChannelList():
@@ -34,7 +43,7 @@ def getChannelList():
 
 @app.route("/messageList", methods=["POST"])
 def getMessageList():
-    channelName = request.form.get("channelName");
+    channelName = request.form.get("channelName")
     channel = channelList[channelName]
     data = []
     for messages in channel.messages:
@@ -47,6 +56,9 @@ def getMessageList():
 def newChannel(data):
     channelName = data["channel"]
     print(channelName)
+    #if channelName in channelList:
+     #   emit('channel exists')
+    #else:
     channelList[channelName] = Channel(channelName)
     print(channelList[channelName])
     emit("update channels", {"channel": channelName}, broadcast = True)
