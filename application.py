@@ -28,9 +28,24 @@ def channels():
 def updateUserList():
     user = request.form.get("user")
     userList.append(user)
-    print(userList)
-    return "True"
+    channelName = request.form.get("currentChannel")
+    print(channelName)
+    if channelName is not None:
+        print("The channel name is " + channelName)
+        channelInfo = channelList[channelName]
+        channelUserList = channelInfo.userlist
+        return (jsonify(channelUserList))
+    return "true"
 
+@app.route("/channelUsers", methods=["POST"])
+def getChannelUserList():
+    channelName = request.form.get("channelName")
+    channel = channelList[channelName]
+    data = []
+    for users in channel.userlist:
+        data.append(users)
+    print(jsonify(data))
+    return (jsonify(data))
 
 @app.route("/channelList", methods=["POST"])
 def getChannelList():
@@ -65,13 +80,18 @@ def newChannel(data):
 
 @socketio.on("select channel")
 def getChannel(data):
-    channelInfo = channelList[data["channelName"]]
-    channelInfo.userlist.append(data["user"])
-    print(channelInfo.userlist)
-    test = channelInfo.userlist
-    test2 = jsonify(test)
-    print(test2)
-    emit("update users", {"users": test})
+    user = data["user"]
+    channelName = data["channelName"]
+    prevChannelName = data["prevChannelName"]
+    print(data["prevChannelName"])
+    if data["prevChannelName"] is not None:
+        prevChannelName = data["prevChannelName"]
+        prevChannelInfo = channelList[prevChannelName]
+        prevChannelInfo.userlist.remove(user)
+    channelInfo = channelList[channelName]
+    channelInfo.userlist.append(user)
+    print("channel has been selected")
+    emit("update users", {"user": user, "channelName": channelName, "prevChannelName": prevChannelName}, broadcast = True)
 
 
 @socketio.on("add message")

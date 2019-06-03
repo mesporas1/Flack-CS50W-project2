@@ -29,10 +29,12 @@ document.addEventListener('DOMContentLoaded', () => {
     //document.querySelector('#user').innerHTML = "Welcome, " + localStorage.getItem('user');
     if (!localStorage.getItem('currentChannel')) {
         document.querySelector("#channelSelection").innerHTML += "Not Selected";
+        localStorage.setItem('prevChannel', null);
     }
     else {
     document.querySelector("#channelSelection").innerHTML += localStorage.getItem('currentChannel');
     initMessageList();
+    initChannelUserList();
     };
 	
 
@@ -46,8 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
         else
             document.querySelector('#submitChannel').disabled = true;
     };
-
     initChannelList();
+    
     
     // Connect to websocket
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
@@ -55,8 +57,21 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('connect', () => {
         document.querySelector('#submitChannel').onclick = () => {
             const channel = document.querySelector('#channel').value;
+            var channelExists = false;
+            document.querySelectorAll('.dropdown-item').forEach(function(existingChannel){
+                if (existingChannel.innerHTML == channel){
+                    console.log("The channel exists!")
+                    channelExists = true;
+                }
+            });
+            console.log("channelExists is equal to " + channelExists + " before adding new channel");
+            if (channelExists == true){
+                alert("Channel exists! Please enter a channel that does not exist!");
+            }
+            else{
             socket.emit('add channel', {'channel': channel});
             document.querySelector('#channel').value = "";
+            }    
         };
 
         document.querySelector('#submitMessage').onclick = () => {
@@ -67,10 +82,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.querySelectorAll('.dropdown-item').forEach(button =>{
             button.onclick = () => {
+                const prevChannelName = localStorage.getItem('currentChannel');
+                localStorage.setItem('prevChannel', prevChannelName);
                 const channelName = button.innerHTML;
                 localStorage.setItem('currentChannel', channelName);
                 const user = localStorage.getItem('user');
-                socket.emit('select channel', {'channelName': channelName, 'user': user});
+                socket.emit('select channel', {'prevChannelName' : prevChannelName,'channelName': channelName, 'user': user});
                 document.location.reload();
             }
         });
@@ -90,10 +107,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const message = document.createElement('li');
         message.innerHTML = data.message;
         if (localStorage.getItem('currentChannel') == data.channelName){
-	document.querySelector('#messages').append(message);
-	}
+        document.querySelector('#messages').append(message);
+        }
     });
     
+    socket.on('update users', data => {
+        console.log(data.user);
+        const user = document.createElement('li');
+        user.innerHTML = data.user;
+        user.setAttribute("id", data.user);
+        console.log(user);
+        console.log(localStorage.getItem('currentChannel') == data.channelName)
+        if (localStorage.getItem('currentChannel') == data.channelName){
+            document.querySelector('#online-users').append(user);
+            }
+        if (localStorage.getItem('currentChannel') == data.prevChannelName){
+            var element = document.getElementById(data.user);
+            element.parentNode.removeChild(element);
+        }
+    });
         
 });
 
@@ -103,8 +135,22 @@ function updateUserList() {
     const request = new XMLHttpRequest();
     request.open('POST', '/updateUserList');
     console.log(request);
+    if (localStorage.getItem('currentChannel')){
+    request.onload = () => {
+        const data = JSON.parse(request.responseText);
+        console.log("the channels userlist is " + data);
+        data.forEach(function(onlineUser){
+            const user = document.createElement('li');
+            user.innerHTML = onlineUser;
+            document.querySelector('#online-users').append(user);
+        });
+    }
+    };   
     const data = new FormData();
     data.append('user', localStorage.getItem('user'));
+    if (localStorage.getItem('currentChannel')){
+        data.append('currentChannel', localStorage.getItem('currentChannel'));
+    }
     request.send(data);
 };
 
@@ -114,8 +160,8 @@ function initMessageList() {
     console.log(request);
     request.onload = () => {
     	const data = JSON.parse(request.responseText);
-	console.log(data);
-	data.forEach(add_message);
+        console.log(data);
+        data.forEach(add_message);
     };
 
     const data = new FormData();
@@ -147,6 +193,29 @@ function initChannelList() {
 
 };
 
+function initChannelUserList() {
+    const request = new XMLHttpRequest();
+    request.open('POST', '/channelUsers');
+    console.log(request);
+    request.onload = () => {
+    	const data = JSON.parse(request.responseText);
+        console.log(data);
+        data.forEach(add_user);
+    };
+
+    const data = new FormData();
+    data.append('channelName', localStorage.getItem('currentChannel'));
+    request.send(data);
+};
+
+function add_user(username) {
+    const user = document.createElement('li');
+    user.innerHTML = username;
+    user.id = username;
+    console.log(user);
+    document.querySelector('#online-users').append(user);
+};
+
 //const channel_template = Handlebars.compile(document.querySelector('#channel-item').innerHTML);
 //console.log(channel_template);
 function add_channel(channelName) {
@@ -162,16 +231,31 @@ function createChannelElement(channelName) {
     channel.className = 'dropdown-item';
     //channel.type = 'button';
     channel.innerHTML = channelName;
+    //channel.onclick = channelButtonFunction(channelName);
     //channel.href = "/channel/" + channelName;
     //var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
     //console.log("hello socket");
     /*socket.on('connect', () => {
-        .onclick = () => {
+        channel.onclick = () => {
+            const prevChannelName = localStorage.getItem('currentChannel');
+            localStorage.setItem('prevChannel', prevChannelName);
+            const channelName = button.innerHTML;
+            localStorage.setItem('currentChannel', channelName);
             const user = localStorage.getItem('user');
-            socket.emit('select channel', {'channelName': channelName, 'user': user});
+            socket.emit('select channel', {'prevChannelName' : prevChannelName,'channelName': channelName, 'user': user});
         }
     });*/
     return channel;
 };
 
-
+/*function channelButtonFunction(channelName){
+        console.log("the button works!");
+        var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+        const prevChannelName = localStorage.getItem('currentChannel');
+        localStorage.setItem('prevChannel', prevChannelName);
+        localStorage.setItem('currentChannel', channelName);
+        const user = localStorage.getItem('user');
+        socket.emit('select channel', {'prevChannelName' : prevChannelName,'channelName': channelName, 'user': user});
+        //document.location.reload();
+    
+};*/
