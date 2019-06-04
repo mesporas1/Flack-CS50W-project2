@@ -37,6 +37,23 @@ def updateUserList():
         return (jsonify(channelUserList))
     return "true"
 
+@app.route("/updateChannelList", methods=["POST"])
+def updateChannelList():
+    user = request.form.get("user")
+    print(user)
+    channelName = request.form.get("currentChannel")
+    print(channelName)
+    prevChannelName = request.form.get("prevChannel")
+    print(prevChannelName)
+    if prevChannelName is not 'null':
+        prevChannelInfo = channelList[prevChannelName]
+        prevChannelInfo.userlist.remove(user)
+    channelInfo = channelList[channelName]
+    channelInfo.userlist.append(user)
+    print("channel has been selected")
+    emit("update users", {"user": user, "channelName": channelName, "prevChannelName": prevChannelName}, broadcast = True)
+
+
 @app.route("/channelUsers", methods=["POST"])
 def getChannelUserList():
     channelName = request.form.get("channelName")
@@ -106,3 +123,4 @@ def newMessage(data):
     channel.messages.append(message)
     print(channel.messages)
     emit("update messages", {"message": message, "channelName":channelName}, broadcast = True)
+

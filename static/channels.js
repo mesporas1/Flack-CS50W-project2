@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('#message').value = "";
         };
 
-        document.querySelectorAll('.dropdown-item').forEach(button =>{
+        /*document.querySelectorAll('.dropdown-item').forEach(button =>{
             button.onclick = () => {
                 const prevChannelName = localStorage.getItem('currentChannel');
                 localStorage.setItem('prevChannel', prevChannelName);
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 socket.emit('select channel', {'prevChannelName' : prevChannelName,'channelName': channelName, 'user': user});
                 document.location.reload();
             }
-        });
+        });*/
     });
 
             
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const channel = createChannelElement(data.channel);            
             console.log(channel);
             document.querySelector('#channels').append(channel);
-	        document.location.reload();
+	        //document.location.reload();
     });
 
     socket.on('update messages', data => {
@@ -231,31 +231,31 @@ function createChannelElement(channelName) {
     channel.className = 'dropdown-item';
     //channel.type = 'button';
     channel.innerHTML = channelName;
-    //channel.onclick = channelButtonFunction(channelName);
-    //channel.href = "/channel/" + channelName;
-    //var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
-    //console.log("hello socket");
-    /*socket.on('connect', () => {
-        channel.onclick = () => {
-            const prevChannelName = localStorage.getItem('currentChannel');
-            localStorage.setItem('prevChannel', prevChannelName);
-            const channelName = button.innerHTML;
-            localStorage.setItem('currentChannel', channelName);
-            const user = localStorage.getItem('user');
-            socket.emit('select channel', {'prevChannelName' : prevChannelName,'channelName': channelName, 'user': user});
-        }
-    });*/
-    return channel;
-};
-
-/*function channelButtonFunction(channelName){
-        console.log("the button works!");
-        var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+    channel.onclick = () => {
+        const request = new XMLHttpRequest();
+        request.open('POST', '/updateChannelList');
+        
+        //request.onload = () => {
+            
+        //};
+        
+        const data = new FormData();
+        data.append('user', localStorage.getItem('user'));
+        data.append('currentChannel', channelName);
+        data.append('prevChannel', localStorage.getItem('prevChannel'));
+        console.log(data);
+        //Set prev and current channel
         const prevChannelName = localStorage.getItem('currentChannel');
         localStorage.setItem('prevChannel', prevChannelName);
         localStorage.setItem('currentChannel', channelName);
-        const user = localStorage.getItem('user');
-        socket.emit('select channel', {'prevChannelName' : prevChannelName,'channelName': channelName, 'user': user});
-        //document.location.reload();
+        
+        request.send(data);
+    };
+    return channel;
+};
+
+function channelButtonFunction(channelName){
     
-};*/
+    
+    
+};
