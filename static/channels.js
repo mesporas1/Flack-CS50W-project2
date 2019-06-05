@@ -60,11 +60,9 @@ document.addEventListener('DOMContentLoaded', () => {
             var channelExists = false;
             document.querySelectorAll('.dropdown-item').forEach(function(existingChannel){
                 if (existingChannel.innerHTML == channel){
-                    console.log("The channel exists!")
                     channelExists = true;
                 }
             });
-            console.log("channelExists is equal to " + channelExists + " before adding new channel");
             if (channelExists == true){
                 alert("Channel exists! Please enter a channel that does not exist!");
             }
@@ -95,15 +93,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             
     socket.on('update channels', data => {
-            console.log("the initial data is " + data.channel)
             const channel = createChannelElement(data.channel);            
-            console.log(channel);
             document.querySelector('#channels').append(channel);
 	        //document.location.reload();
     });
 
     socket.on('update messages', data => {
-        console.log(data.message);
         const message = document.createElement('li');
         message.innerHTML = data.message;
         if (localStorage.getItem('currentChannel') == data.channelName){
@@ -112,12 +107,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     socket.on('update users', data => {
-        console.log(data.user);
         const user = document.createElement('li');
         user.innerHTML = data.user;
         user.setAttribute("id", data.user);
-        console.log(user);
-        console.log(localStorage.getItem('currentChannel') == data.channelName)
         if (localStorage.getItem('currentChannel') == data.channelName){
             document.querySelector('#online-users').append(user);
             }
@@ -134,11 +126,9 @@ document.addEventListener('DOMContentLoaded', () => {
 function updateUserList() {
     const request = new XMLHttpRequest();
     request.open('POST', '/updateUserList');
-    console.log(request);
     if (localStorage.getItem('currentChannel')){
     request.onload = () => {
         const data = JSON.parse(request.responseText);
-        console.log("the channels userlist is " + data);
         data.forEach(function(onlineUser){
             const user = document.createElement('li');
             user.innerHTML = onlineUser;
@@ -157,10 +147,8 @@ function updateUserList() {
 function initMessageList() {
     const request = new XMLHttpRequest();
     request.open('POST', '/messageList');
-    console.log(request);
     request.onload = () => {
     	const data = JSON.parse(request.responseText);
-        console.log(data);
         data.forEach(add_message);
     };
 
@@ -172,7 +160,6 @@ function initMessageList() {
 function add_message(messageText) {
     const message = document.createElement('li');
     message.innerHTML = messageText;
-    console.log(message);
     document.querySelector('#messages').append(message);
 };
 
@@ -180,10 +167,8 @@ function initChannelList() {
 
     const request = new XMLHttpRequest();
     request.open('POST', '/channelList');
-    console.log(request);
     request.onload = () => {
         const data = JSON.parse(request.responseText);
-        console.log(data);
         data.forEach(add_channel);
     };
 
@@ -196,10 +181,8 @@ function initChannelList() {
 function initChannelUserList() {
     const request = new XMLHttpRequest();
     request.open('POST', '/channelUsers');
-    console.log(request);
     request.onload = () => {
     	const data = JSON.parse(request.responseText);
-        console.log(data);
         data.forEach(add_user);
     };
 
@@ -212,7 +195,6 @@ function add_user(username) {
     const user = document.createElement('li');
     user.innerHTML = username;
     user.id = username;
-    console.log(user);
     document.querySelector('#online-users').append(user);
 };
 
@@ -221,7 +203,6 @@ function add_user(username) {
 function add_channel(channelName) {
     //Create new channel
     const channel = createChannelElement(channelName);
-    console.log(channel);
     //Add channel to DOM
     document.querySelector('#channels').append(channel);
 };
@@ -243,7 +224,9 @@ function createChannelElement(channelName) {
         data.append('user', localStorage.getItem('user'));
         data.append('currentChannel', channelName);
         data.append('prevChannel', localStorage.getItem('prevChannel'));
-        console.log(data);
+        console.log("user is " + localStorage.getItem('user'));
+        console.log("currentChannel is " + channelName);
+        console.log("prev channel is " + localStorage.getItem('prevChannel'));
         //Set prev and current channel
         const prevChannelName = localStorage.getItem('currentChannel');
         localStorage.setItem('prevChannel', prevChannelName);
