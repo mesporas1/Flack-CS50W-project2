@@ -54,7 +54,7 @@ def updateChannelList():
     print(channelInfo.userlist)
     print("channel has been selected")
     socketio.emit("update users", {"user": user, "channelName": channelName, "prevChannelName": prevChannelName}, broadcast = True)
-
+    return "true"
 
 @app.route("/channelUsers", methods=["POST"])
 def getChannelUserList():
