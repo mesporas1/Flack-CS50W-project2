@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
         user.innerHTML = data.user;
         user.setAttribute("id", data.user);
         if (localStorage.getItem('currentChannel') == data.channelName){
-            document.querySelector('#online-users').append(user);
+            document.querySelector('.online-users').append(user);
             }
         if (localStorage.getItem('currentChannel') == data.prevChannelName){
             var element = document.getElementById(data.user);
@@ -132,7 +132,7 @@ function updateUserList() {
         data.forEach(function(onlineUser){
             const user = document.createElement('li');
             user.innerHTML = onlineUser;
-            document.querySelector('#online-users').append(user);
+            document.querySelector('.online-users').append(user);
         });
     }
     };   
@@ -195,7 +195,7 @@ function add_user(username) {
     const user = document.createElement('li');
     user.innerHTML = username;
     user.id = username;
-    document.querySelector('#online-users').append(user);
+    document.querySelector('.online-users').append(user);
 };
 
 //const channel_template = Handlebars.compile(document.querySelector('#channel-item').innerHTML);
@@ -216,9 +216,9 @@ function createChannelElement(channelName) {
         const request = new XMLHttpRequest();
         request.open('POST', '/updateChannelList');
         
-        //request.onload = () => {
-            
-        //};
+        request.onload = () => {
+            document.location.reload();  
+        };
         
         const data = new FormData();
         data.append('user', localStorage.getItem('user'));
