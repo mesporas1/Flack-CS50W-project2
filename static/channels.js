@@ -116,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (localStorage.getItem('currentChannel') == data.prevChannelName){
             var element = document.getElementById(data.user);
             element.parentNode.removeChild(element);
+	    console.log("The old user was removed from this channel!");
         }
     });
         
@@ -217,7 +218,10 @@ function createChannelElement(channelName) {
         request.open('POST', '/updateChannelList');
         
         request.onload = () => {
-            document.location.reload();  
+	    const prevChannelName = localStorage.getItem('currentChannel');
+            localStorage.setItem('prevChannel', prevChannelName);
+            localStorage.setItem('currentChannel', channelName);
+	    document.location.reload();  
         };
         
         const data = new FormData();
@@ -227,10 +231,6 @@ function createChannelElement(channelName) {
         console.log("user is " + localStorage.getItem('user'));
         console.log("currentChannel is " + channelName);
         console.log("prev channel is " + localStorage.getItem('prevChannel'));
-        //Set prev and current channel
-        const prevChannelName = localStorage.getItem('currentChannel');
-        localStorage.setItem('prevChannel', prevChannelName);
-        localStorage.setItem('currentChannel', channelName);
         
         request.send(data);
     };
