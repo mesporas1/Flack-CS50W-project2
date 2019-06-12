@@ -33,10 +33,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     else {
     document.querySelector("#channelSelection").innerHTML += localStorage.getItem('currentChannel');
+    
     initMessageList();
     initChannelUserList();
     };
-	
+    
+    
 
     // By default, submit button is disabled
     document.querySelector('#submitChannel').disabled = true;
@@ -50,7 +52,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     initChannelList();
     
-    
+    document.querySelectorAll('.dropdown-item').forEach(function(existingChannel){
+        console.log(existingChannel.innerHTML);
+        if (existingChannel.innerHTML == localStorage.getItem('currentChannel')){
+            existingChannel.disabled;
+        }
+    });
+
     // Connect to websocket
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
@@ -110,14 +118,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const user = document.createElement('li');
         user.innerHTML = data.user;
         user.setAttribute("id", data.user);
+        console.log("The updated user is " + data.user);
+        console.log("The user moved to " + data.channelName);
+        console.log("The user left from " + data.prevChannelName);
         if (localStorage.getItem('currentChannel') == data.channelName){
             document.querySelector('.online-users').append(user);
+            console.log("The new user is " + data.user);
             }
-        if (localStorage.getItem('currentChannel') == data.prevChannelName){
+        else if (localStorage.getItem('currentChannel') == data.prevChannelName){
             var element = document.getElementById(data.user);
+            console.log("The user being removed is " + element);
             element.parentNode.removeChild(element);
 	    console.log("The old user was removed from this channel!");
-        }
+        };
     });
         
 });
@@ -221,18 +234,19 @@ function createChannelElement(channelName) {
 	    const prevChannelName = localStorage.getItem('currentChannel');
             localStorage.setItem('prevChannel', prevChannelName);
             localStorage.setItem('currentChannel', channelName);
-	    document.location.reload();  
+            document.location.reload();  
         };
         
         const data = new FormData();
         data.append('user', localStorage.getItem('user'));
         data.append('currentChannel', channelName);
-        data.append('prevChannel', localStorage.getItem('prevChannel'));
+        data.append('prevChannel', localStorage.getItem('currentChannel'));
         console.log("user is " + localStorage.getItem('user'));
         console.log("currentChannel is " + channelName);
         console.log("prev channel is " + localStorage.getItem('prevChannel'));
         
         request.send(data);
+        
     };
     return channel;
 };
