@@ -1,7 +1,6 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     if (!localStorage.getItem('user') || localStorage.getItem('user') == null || localStorage.getItem('user') == "null"){
-        //localStorage.setItem('user', "Null");
         user = window.prompt("Please enter a username", "Enter username");
         if (userList.indexOf(user) >= 0){
             alert("User exists!");
@@ -16,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     else {
         document.querySelector('#user').innerHTML = "Welcome, " + localStorage.getItem('user');
     }
-    //document.querySelector('#user').innerHTML = "Welcome, " + localStorage.getItem('user');
     if (!localStorage.getItem('currentChannel')) {
         document.querySelector("#channelSelection").innerHTML += "Not Selected";
         localStorage.setItem('prevChannel', null);
@@ -83,26 +81,12 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         };
 
-        
-
-        /*document.querySelectorAll('.dropdown-item').forEach(button =>{
-            button.onclick = () => {
-                const prevChannelName = localStorage.getItem('currentChannel');
-                localStorage.setItem('prevChannel', prevChannelName);
-                const channelName = button.innerHTML;
-                localStorage.setItem('currentChannel', channelName);
-                const user = localStorage.getItem('user');
-                socket.emit('select channel', {'prevChannelName' : prevChannelName,'channelName': channelName, 'user': user});
-                document.location.reload();
-            }
-        });*/
     });
 
             
     socket.on('update channels', data => {
             const channel = createChannelElement(data.channel);            
             document.querySelector('#channels').append(channel);
-	        //document.location.reload();
     });
 
     socket.on('update messages', data => {
@@ -216,7 +200,6 @@ function add_channel(channelName) {
 function createChannelElement(channelName) {
     const channel = document.createElement('button');
     channel.className = 'dropdown-item';
-    //channel.type = 'button';
     channel.innerHTML = channelName;
     channel.onclick = () => {
         if (localStorage.getItem('currentChannel') == channelName){
