@@ -38,21 +38,13 @@ def updateUserList():
 @app.route("/updateChannelList", methods=["POST"])
 def updateChannelList():
     user = request.form.get("user")
-    print("the user is " + user)
     channelName = request.form.get("currentChannel")
-    print("the new channel is " + channelName)
     prevChannelName = request.form.get("prevChannel")
-    print(type(prevChannelName))
-    print("the prevchannel is " + prevChannelName)
     if prevChannelName != 'null':
-        print(prevChannelName)
         prevChannelInfo = channelList[prevChannelName]
         prevChannelInfo.userlist.remove(user)
-        print(prevChannelInfo.userlist)
     channelInfo = channelList[channelName]
     channelInfo.userlist.append(user)
-    print(channelInfo.userlist)
-    print("channel has been selected")
     socketio.emit("update users", {"user": user, "channelName": channelName, "prevChannelName": prevChannelName}, broadcast = True)
     return "true"
 
@@ -82,7 +74,6 @@ def getMessageList():
         data.append(messages)
     return (jsonify(data))
 
-#@app.route("/newChannel", methods=["POST"])
 @socketio.on("add channel")
 def newChannel(data):
     channelName = data["channel"]

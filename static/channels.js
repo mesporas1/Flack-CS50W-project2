@@ -1,19 +1,9 @@
-//Todo:
-//  4-23-2019: Need to add channelList if uninitialized whenver the page is relaoded
 
-
-//Prompt user for a username if empty. Set starting value of user if empty
-
-
-// Displays user
 document.addEventListener('DOMContentLoaded', () => {
-    console.log(userList);
     if (!localStorage.getItem('user') || localStorage.getItem('user') == null || localStorage.getItem('user') == "null"){
         //localStorage.setItem('user', "Null");
         user = window.prompt("Please enter a username", "Enter username");
-        console.log(userList.indexOf(user));
         if (userList.indexOf(user) >= 0){
-            //console.log('hello');
             alert("User exists!");
             document.location.reload();
         }
@@ -42,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // By default, submit button is disabled
     document.querySelector('#submitChannel').disabled = true;
+    document.querySelector('#submitMessage').disabled = true;
 
     // Enable button only if there is text in the input field
     document.querySelector('#channel').onkeyup = () => {
@@ -50,14 +41,15 @@ document.addEventListener('DOMContentLoaded', () => {
         else
             document.querySelector('#submitChannel').disabled = true;
     };
+    document.querySelector('#message').onkeyup = () => {
+        if (document.querySelector('#message').value.length > 0)
+            document.querySelector('#submitMessage').disabled = false;
+        else
+            document.querySelector('#submitMessage').disabled = true;
+    };
     initChannelList();
     
-    document.querySelectorAll('.dropdown-item').forEach(function(existingChannel){
-        console.log(existingChannel.innerHTML);
-        if (existingChannel.innerHTML == localStorage.getItem('currentChannel')){
-            existingChannel.disabled;
-        }
-    });
+    
 
     // Connect to websocket
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
@@ -82,9 +74,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.querySelector('#submitMessage').onclick = () => {
             const message = document.querySelector('#message').value;
-            socket.emit('add message', {'message': message, 'user':localStorage.getItem('user'), 'channel':localStorage.getItem('currentChannel')});
-            document.querySelector('#message').value = "";
+            if (!localStorage.getItem('currentChannel')){
+                alert("Please select a channel!");
+            }
+            else{
+                socket.emit('add message', {'message': message, 'user':localStorage.getItem('user'), 'channel':localStorage.getItem('currentChannel')});
+                document.querySelector('#message').value = "";
+            };
         };
+
+        
 
         /*document.querySelectorAll('.dropdown-item').forEach(button =>{
             button.onclick = () => {
@@ -118,18 +117,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const user = document.createElement('li');
         user.innerHTML = data.user;
         user.setAttribute("id", data.user);
-        console.log("The updated user is " + data.user);
-        console.log("The user moved to " + data.channelName);
-        console.log("The user left from " + data.prevChannelName);
         if (localStorage.getItem('currentChannel') == data.channelName){
             document.querySelector('.online-users').append(user);
-            console.log("The new user is " + data.user);
             }
         else if (localStorage.getItem('currentChannel') == data.prevChannelName){
             var element = document.getElementById(data.user);
-            console.log("The user being removed is " + element);
             element.parentNode.removeChild(element);
-	    console.log("The old user was removed from this channel!");
         };
     });
         
@@ -213,7 +206,6 @@ function add_user(username) {
 };
 
 //const channel_template = Handlebars.compile(document.querySelector('#channel-item').innerHTML);
-//console.log(channel_template);
 function add_channel(channelName) {
     //Create new channel
     const channel = createChannelElement(channelName);
@@ -227,32 +219,28 @@ function createChannelElement(channelName) {
     //channel.type = 'button';
     channel.innerHTML = channelName;
     channel.onclick = () => {
-        const request = new XMLHttpRequest();
-        request.open('POST', '/updateChannelList');
-        
-        request.onload = () => {
-	    const prevChannelName = localStorage.getItem('currentChannel');
-            localStorage.setItem('prevChannel', prevChannelName);
-            localStorage.setItem('currentChannel', channelName);
-            document.location.reload();  
+        if (localStorage.getItem('currentChannel') == channelName){
+            alert("You are already on this channel!");
+        }
+        else{
+            const request = new XMLHttpRequest();
+            request.open('POST', '/updateChannelList');
+            
+            request.onload = () => {
+            const prevChannelName = localStorage.getItem('currentChannel');
+                localStorage.setItem('prevChannel', prevChannelName);
+                localStorage.setItem('currentChannel', channelName);
+                document.location.reload();  
+            };
+            
+            const data = new FormData();
+            data.append('user', localStorage.getItem('user'));
+            data.append('currentChannel', channelName);
+            data.append('prevChannel', localStorage.getItem('currentChannel'));
+            
+            request.send(data);
+            }
         };
-        
-        const data = new FormData();
-        data.append('user', localStorage.getItem('user'));
-        data.append('currentChannel', channelName);
-        data.append('prevChannel', localStorage.getItem('currentChannel'));
-        console.log("user is " + localStorage.getItem('user'));
-        console.log("currentChannel is " + channelName);
-        console.log("prev channel is " + localStorage.getItem('prevChannel'));
-        
-        request.send(data);
-        
-    };
     return channel;
 };
 
-function channelButtonFunction(channelName){
-    
-    
-    
-};
