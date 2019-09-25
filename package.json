@@ -1,0 +1,28 @@
+{
+  "name": "flack-cs50w-project2",
+  "version": "1.0.0",
+  "description": "This is a slack like messaging service made for Harvard's CS50W Online Course. It utilizes Python's Flask Socket library for the backend and HTML/CSS and Javascript for the front end. Feel free to clone the repository!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mesporas1/Flack-CS50W-project2.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mesporas1/Flack-CS50W-project2/issues"
+  },
+  "homepage": "https://github.com/mesporas1/Flack-CS50W-project2#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^6.4.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.14.3",
+    "eslint-plugin-react-hooks": "^1.7.0"
+  }
+}
